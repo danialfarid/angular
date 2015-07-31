@@ -37,8 +37,9 @@ import {
   serializeMouseEvent,
   serializeKeyboardEvent,
   serializeGenericEvent,
-  serializeEventWithValue
+  serializeEventWithTarget
 } from 'angular2/src/web-workers/ui/event_serializer';
+import {wtfInit} from 'angular2/src/profile/wtf_init';
 
 /**
  * Creates a zone, sets up the DI bindings
@@ -47,6 +48,7 @@ import {
 export function bootstrapUICommon(bus: MessageBus) {
   BrowserDomAdapter.makeCurrent();
   var zone = createNgZone(new ExceptionHandler(DOM));
+  wtfInit();
   zone.run(() => {
     var injector = createInjector(zone);
     var webWorkerMain = injector.get(WebWorkerMain);
@@ -261,7 +263,7 @@ class EventDispatcher implements RenderEventDispatcher {
       case "input":
       case "change":
       case "blur":
-        serializedEvent = serializeEventWithValue(e);
+        serializedEvent = serializeEventWithTarget(e);
         break;
       case "abort":
       case "afterprint":

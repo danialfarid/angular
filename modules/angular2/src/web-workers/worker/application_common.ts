@@ -17,9 +17,13 @@ import {
   ChangeDetection,
   DynamicChangeDetection,
   JitChangeDetection,
+  PreGeneratedChangeDetection,
   Pipes,
   defaultPipes,
-  PreGeneratedChangeDetection
+  IterableDiffers,
+  defaultIterableDiffers,
+  KeyValueDiffers,
+  defaultKeyValueDiffers
 } from 'angular2/src/change_detection/change_detection';
 import {StyleUrlResolver} from 'angular2/src/render/dom/compiler/style_url_resolver';
 import {ExceptionHandler} from 'angular2/src/core/exception_handler';
@@ -62,6 +66,7 @@ import {RenderProtoViewRefStore} from 'angular2/src/web-workers/shared/render_pr
 import {
   RenderViewWithFragmentsStore
 } from 'angular2/src/web-workers/shared/render_view_with_fragments_store';
+import {wtfInit} from 'angular2/src/profile/wtf_init';
 
 var _rootInjector: Injector;
 
@@ -119,6 +124,8 @@ function _injectorBindings(appComponentType, bus: WorkerMessageBus,
     CompilerCache,
     ViewResolver,
     bind(Pipes).toValue(defaultPipes),
+    bind(IterableDiffers).toValue(defaultIterableDiffers),
+    bind(KeyValueDiffers).toValue(defaultKeyValueDiffers),
     bind(ChangeDetection).toClass(bestChangeDetection),
     DirectiveResolver,
     Parser,
@@ -138,6 +145,7 @@ export function bootstrapWebworkerCommon(
     appComponentType: Type, bus: WorkerMessageBus,
     componentInjectableBindings: List<Type | Binding | List<any>> = null): Promise<ApplicationRef> {
   var bootstrapProcess: PromiseCompleter<any> = PromiseWrapper.completer();
+  wtfInit();
 
   var zone = createNgZone(new ExceptionHandler(new PrintLogger()));
   zone.run(() => {
